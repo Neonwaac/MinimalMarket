@@ -1,0 +1,40 @@
+*{
+    margin: 0;
+}
+#historial-container{
+    margin: 20px 0px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    gap: 20px;
+    justify-content: center;
+}
+#historial-container h1{
+    width: 100%;
+    text-align: center;
+    margin: 20px 0px;
+}
+.historial-log{
+    width: 60%;
+    height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    border: 1px solid #33333366;
+}
+.historial-fecha{
+    width: 100%;
+    font-size: 20px;
+    font-weight: 500;
+}
+.historial-info{
+    width: 100%;
+}
+.historial-info p{
+    font-size: 20px;
+}
+.historial-info h2{
+    font-size: 30px;
+    text-align: end;
+}

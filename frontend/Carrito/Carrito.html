@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../NavigationBar/NavigationBar.css">
+    <link rel="stylesheet" href="Carrito.css">
+    <title>EcoAura - Carrito</title>
+</head>
+<body>
+    <!--NAVIGATION BAR-->
+    <div class="navigation-bar">
+        <div class="navigation-bar-left">
+            <img src="../assets/whitelogo.png">
+        </div>
+        <div class="navigation-bar-right">
+            <p onclick="switchPage('home')">Home</p>
+            <p onclick="switchPage('carrito')">Carrito</p>
+            <p onclick="switchPage('historial')">Historial</p>
+            <p onclick="LogOut()">Cerrar Sesión</p>
+        </div>
+    </div>
+    <!-- CARRITO -->
+     <div id="carrito-container">
+        <h1>Carrito de Compras</h1>
+        
+        </div>
+     </div>
+     <h2 id="total-carrito">Precio total a pagar: 0$ </h2>
+     <div class="carrito-action-container">
+        <button id="confirmar-compra">Confirmar Compra</button>
+     </div>
+    <script src="Carrito.js"></script>
+    <script src="../NavigationBar/NavigationBar.js"></script>
+</body>
+</html>

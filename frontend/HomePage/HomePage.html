@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../NavigationBar/NavigationBar.css">
+    <link rel="stylesheet" href="./HomePage.css">
+    <title>EcoAura - HomePage</title>
+</head>
+<body>
+    <!--NAVIGATION BAR-->
+    <div class="navigation-bar">
+        <div class="navigation-bar-left">
+            <img src="../assets/whitelogo.png">
+        </div>
+        <div class="navigation-bar-right">
+            <p onclick="switchPage('home')">Home</p>
+            <p onclick="switchPage('carrito')">Carrito</p>
+            <p onclick="switchPage('historial')">Historial</p>
+            <p onclick="LogOut()">Cerrar Sesión</p>
+        </div>
+    </div>
+    <!-- HOME PAGE -->
+     <div class="about-us-container">
+        <div class="about-us">
+            <h2>Hola <span id="welcome-to"></span>! Bienvenido a</h2>
+            <h1>MinimalMarket</h1>
+            <h3>Una Empresa dedicada a la venta de productos de segunda mano con una calidad increible</h3>
+        </div>
+        <div class="about-us-image">
+     </div>
+     <!-- FETCH PRODUCTOS -->
+      <div id="productos-container">
+        <h1>Productos disponibles</h1>
+      </div>
+    <script src="HomePage.js"></script>
+    <script src="../NavigationBar/NavigationBar.js"></script>
+</body>
+</html>
