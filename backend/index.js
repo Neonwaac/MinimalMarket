@@ -6,12 +6,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/photos', express.static('photos'));
+app.use(express.static('../frontend'));
+
 
 const PORT = 8009;
 
 app.listen(PORT, function(){
     console.log("Servidor corriendo en http://localhost:"+PORT)
 })
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -93,7 +99,7 @@ app.post("/login", function (req, res) {
     });
 });
 app.get("/productos", function(req, res){
-    db.query("SELECT * FROM productos", function(err, rows){
+    db.query("SELECT * FROM productos WHERE stock > 0", function(err, rows){
         if(err) {
             console.error(err);
             res.status(500).json({error: "Error al obtener productos"})
@@ -215,7 +221,7 @@ app.get("/carrito/:id", function(req, res){
 
 app.get("/historial/usuario/:id", function(req, res){
     const id_usuario = parseInt(req.params.id, 10);
-    const query = "SELECT * FROM historial WHERE id_usuario = ?";
+    const query = "SELECT * FROM historial WHERE id_usuario = ? ORDER BY timestamp DESC";
     db.query(query, [id_usuario], function(err, rows){
         if(err){
             console.error(err);

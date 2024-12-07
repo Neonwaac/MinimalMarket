@@ -1,28 +1,46 @@
 const user = JSON.parse(localStorage.getItem("user"));
-if (user) {
-    console.log("Usuario en localStorage:", JSON.stringify(user.user));
-}else{
-    alert("Inicia Sesión primero")
+if (!user) {
+    alert("Inicia Sesión primero");
     window.location.href = "../index.html";
 }
+
 const URL = "http://localhost:8009/carrito";
-
 let totalCarrito = 0;
-const carritoContainer = document.getElementById("carrito-container")
+const carritoContainer = document.getElementById("carrito-container");
 
-document.getElementById("confirmar-compra").addEventListener("click", async function(){
+document.getElementById("confirmar-compra").addEventListener("click", async function () {
     const productos = [];
     const items = carritoContainer.querySelectorAll(".producto-card-info h2");
     items.forEach((item) => {
         productos.push(item.textContent);
     });
+
+    if (productos.length === 0) {
+        alert("El carrito está vacío. Agrega productos antes de confirmar.");
+        return;
+    }
+
     const historialData = {
         id_usuario: user.user.id,
         productos: JSON.stringify(productos),
         total: totalCarrito,
     };
+
     try {
-        const response = await fetch("http://localhost:8009/historial", {
+        // Eliminar productos del carrito
+        const deleteResponse = await fetch(`${URL}/usuario/${user.user.id}`, {
+            method: "DELETE",
+        });
+
+        if (!deleteResponse.ok) {
+            console.error("Error al eliminar productos del carrito:", deleteResponse.statusText);
+            alert("No se pudo vaciar el carrito. Intenta nuevamente.");
+            return;
+        }
+        console.log("Productos eliminados del carrito.");
+
+        // Agregar datos al historial
+        const historialResponse = await fetch("http://localhost:8009/historial", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -30,92 +48,94 @@ document.getElementById("confirmar-compra").addEventListener("click", async func
             body: JSON.stringify(historialData),
         });
 
-        if (response.ok) {
-            console.log("Historial actualizado con éxito");
-        } else {
-            console.error("Error al actualizar el historial");
+        if (!historialResponse.ok) {
+            console.error("Error al actualizar el historial:", historialResponse.statusText);
+            alert("No se pudo actualizar el historial. Intenta nuevamente.");
+            return;
         }
-    } catch (error) {
-        console.error("Error en la solicitud al historial:", error);
-        return; 
-    }
-    fetch(URL + "/usuario/" + user.user.id, {
-        method: "DELETE",
-    })
-        .then((response) => {
-            if (response.ok) {
-                console.log("Has comprado los productos");
-                location.reload();
-            } else {
-                console.error("Error al eliminar productos");
-            }
-        })
-        .catch((error) => console.error("Error al eliminar productos:", error));
-})
 
-function EliminarProducto(id){
+        console.log("Historial actualizado con éxito.");
+        alert("Compra confirmada y historial actualizado.");
+        location.reload();
+    } catch (error) {
+        console.error("Error en el proceso de confirmación de compra:", error);
+        alert("Ocurrió un error durante la compra. Intenta nuevamente.");
+    }
+});
+
+function EliminarProducto(id) {
     if (confirm("¿Seguro que quieres eliminar este producto?")) {
-        fetch(URL + "/" + id, {
-            method: "DELETE"
-        })
-        .then((response) => {
-            if (response.ok) {
-                console.log("Producto eliminado");
-                location.reload();
-            } else {
-                console.log("Error al eliminar producto");
-            }
-        })
-        .catch((error) => console.error("Error al eliminar producto:", error));
+        fetch(`${URL}/${id}`, { method: "DELETE" })
+            .then((response) => {
+                if (response.ok) {
+                    console.log("Producto eliminado");
+                    location.reload();
+                } else {
+                    console.error("Error al eliminar producto:", response.statusText);
+                    alert("No se pudo eliminar el producto. Intenta nuevamente.");
+                }
+            })
+            .catch((error) => console.error("Error al eliminar producto:", error));
     } else {
-        console.log("El usuario canceló la compra.");
+        console.log("El usuario canceló la eliminación.");
     }
 }
+
 const showCarrito = (dataCarrito) => {
+    const totalCarritoText = document.getElementById("total-carrito");
+    carritoContainer.innerHTML = ""; // Limpia el contenedor antes de agregar productos
+    totalCarrito = 0;
+
     dataCarrito.forEach((producto) => {
-        const totalCarritoText = document.getElementById("total-carrito");
-        totalCarrito+=producto.precio
-        totalCarritoText.textContent = "Precio total a pagar: "+totalCarrito+"$"
+        totalCarrito += producto.precio;
+        totalCarritoText.textContent = `Precio total a pagar: ${totalCarrito}$`;
+
         const productoCard = document.createElement("div");
         productoCard.classList.add("producto-card");
 
-        const ImageContainer = document.createElement("div");
-        ImageContainer.classList.add("producto-card-image");
+        const imageContainer = document.createElement("div");
+        imageContainer.classList.add("producto-card-image");
 
-        const Image = document.createElement("img");
-        Image.src = producto.foto;
+        const image = document.createElement("img");
+        image.src = producto.foto;
 
-        ImageContainer.append(Image);
+        imageContainer.append(image);
 
-        const CardInfo = document.createElement("div");
-        CardInfo.classList.add("producto-card-info");
+        const cardInfo = document.createElement("div");
+        cardInfo.classList.add("producto-card-info");
 
-        const Nombre = document.createElement("h2");
-        Nombre.textContent = producto.nombre;
+        const nombre = document.createElement("h2");
+        nombre.textContent = producto.nombre;
 
-        const Precio = document.createElement("h3");
-        Precio.textContent = producto.precio+"$";
+        const precio = document.createElement("h3");
+        precio.textContent = `${producto.precio}$`;
 
+        cardInfo.append(nombre, precio);
 
+        const cardActions = document.createElement("div");
+        cardActions.classList.add("producto-card-actions");
 
-        CardInfo.append(Nombre, Precio)
-
-        const CardActions = document.createElement("div");
-        CardActions.classList.add("producto-card-actions");
-
-        const DeleteButton = document.createElement("button");
-        DeleteButton.classList.add("delete-button")
-        DeleteButton.addEventListener("click", function (event) {
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("delete-button");
+        deleteButton.textContent = "Eliminar";
+        deleteButton.addEventListener("click", (event) => {
             event.preventDefault();
-            EliminarProducto(producto.id); 
+            EliminarProducto(producto.id);
         });
 
-        CardActions.append(DeleteButton)
-        productoCard.append(ImageContainer, CardInfo, CardActions)
-        carritoContainer.append(productoCard)
+        cardActions.append(deleteButton);
+        productoCard.append(imageContainer, cardInfo, cardActions);
+        carritoContainer.append(productoCard);
+    });
+};
+
+// Carga inicial del carrito
+fetch(`${URL}/${user.user.id}`)
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`Error al obtener el carrito: ${response.statusText}`);
+        }
+        return response.json();
     })
-}
-fetch(URL+"/"+user.user.id)
-.then(response => response.json())
-.then(showCarrito)
-.catch((error) => console.error(error))
+    .then(showCarrito)
+    .catch((error) => console.error("Error al cargar el carrito:", error));

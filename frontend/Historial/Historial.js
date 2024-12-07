@@ -21,8 +21,8 @@ const showHistorial = (dataHistorial) =>{
         const dia = fecha.getDate()
         const mes = fecha.getMonth()+1;
         const anio = fecha.getFullYear();
-        const horas = (fecha.getHours()<12)?"0"+fecha.getHours():fecha.getHours();
-        const minutos = (fecha.getMinutes()<10)?"0"+fecha.getMinutes():fecha.getMinutes();
+        const horas = (fecha.getHours() < 10) ? "0" + fecha.getHours() : fecha.getHours();
+        const minutos = (fecha.getMinutes() < 10) ? "0" + fecha.getMinutes() : fecha.getMinutes();        
         const parsedFecha = "El "+dia+"/"+mes+"/"+anio+" a las "+horas+":"+minutos;
         historialFecha.textContent = parsedFecha
 
