@@ -23,7 +23,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'EcoAura'
+    database: 'MinimalMarket'
 });
 
 db.connect(function(err){
